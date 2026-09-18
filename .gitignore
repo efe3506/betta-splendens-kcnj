@@ -1,0 +1,7 @@
+# downloaded data and everything the pipeline produces
+data/
+results/
+figures/
+
+__pycache__/
+*.pyc

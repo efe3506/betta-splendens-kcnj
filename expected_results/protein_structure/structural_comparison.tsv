@@ -1,0 +1,4 @@
+target	reference	rmsd_A	n_residues	seq_identity_pct
+kcnj16b	kcnj16a	0.79	267	50.8
+kcnj10c	kcnj10a	0.20	301	85.9
+kcnj4	kcnj2a	0.42	312	59.6

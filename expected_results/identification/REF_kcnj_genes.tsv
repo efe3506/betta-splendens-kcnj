@@ -1,0 +1,24 @@
+gene	seqid	start	end	strand	gene_id	description
+LOC114844899	NC_040897.2	11666279	11673966	+	114844899	ATP-sensitive inward rectifier potassium channel 10-like
+LOC114846053	NC_040898.2	10382129	10389681	+	114846053	G protein-activated inward rectifier potassium channel 1-like
+LOC114860740	NC_040888.2	10549026	10559455	-	114860740	G protein-activated inward rectifier potassium channel 1-like
+LOC114860957	NC_040888.2	6129493	6135929	+	114860957	inward rectifier potassium channel 16-like
+LOC114861067	NC_040888.2	6136533	6140985	+	114861067	inward rectifier potassium channel 2-like
+LOC114863156	NC_040881.3	9332207	9337829	-	114863156	ATP-sensitive inward rectifier potassium channel 12-like
+kcnj10a	NC_040882.2	20972524	20980848	-	114848305	potassium inwardly rectifying channel subfamily J member 10a
+kcnj11	NC_040886.2	6852772	6854982	-	114857695	potassium inwardly rectifying channel subfamily J member 11
+kcnj11l	NC_040886.2	19259957	19261928	+	114856921	potassium inwardly rectifying channel subfamily J member 11, like
+kcnj12a	NC_040898.2	8889225	8897972	-	114845721	potassium inwardly rectifying channel subfamily J member 12a
+kcnj12b	NC_040888.2	3187011	3192270	+	114860829	potassium inwardly rectifying channel subfamily J member 12b
+kcnj13	NC_040893.2	204779	220515	-	114868543	potassium inwardly rectifying channel subfamily J member 13
+kcnj14	NC_040896.2	12511769	12534922	-	114843522	potassium inwardly rectifying channel subfamily J member 14
+kcnj15	NC_040894.2	9573107	9575817	+	114870030	potassium inwardly rectifying channel subfamily J member 15
+kcnj16a	NC_040898.2	15437781	15442368	+	114845554	potassium inwardly rectifying channel subfamily J member 16a
+kcnj1a.1	NC_040893.2	13389595	13394809	-	114868549	potassium inwardly rectifying channel subfamily J member 1a, tandem duplicate 1
+kcnj1b	NC_040894.2	6560953	6563989	+	114870036	potassium inwardly rectifying channel subfamily J member 1b
+kcnj2a	NC_040898.2	15445264	15449705	+	114845553	potassium inwardly rectifying channel subfamily J member 2a
+kcnj3a	NC_040899.1	9794515	9810341	-	114847297	potassium inwardly rectifying channel subfamily J member 3a
+kcnj5	NC_040893.2	13400467	13416949	+	114868548	potassium inwardly rectifying channel subfamily J member 5
+kcnj6	NC_040894.2	9603618	9615193	-	114869335	potassium inwardly rectifying channel subfamily J member 6
+kcnj8	NC_040889.2	11092051	11095053	+	114863269	potassium inwardly rectifying channel subfamily J member 8
+kcnj9	NC_040897.2	11997062	12005563	+	114844518	potassium inwardly rectifying channel subfamily J member 9

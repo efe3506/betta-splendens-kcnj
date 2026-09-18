@@ -1,0 +1,8 @@
+protein	length	mean_plddt	pct_below_50	filter_position	filter_plddt
+kcnj4	582	64.2	44.3	236	91.5
+kcnj2a	427	77.7	19.7	140	92.1
+kcnj16b	376	76.3	16.0	125	90.6
+kcnj16a	405	76.2	21.0	123	92.6
+kcnj10c	420	75.1	21.7	146	91.6
+kcnj10a	432	75.1	23.4	157	92.7
+kcnj15	340	84.4	4.7	109	92.3

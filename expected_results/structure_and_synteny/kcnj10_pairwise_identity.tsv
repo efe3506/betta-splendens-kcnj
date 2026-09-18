@@ -1,0 +1,11 @@
+seq1	seq2	identity_pct
+Bs_LOC114844899	Bs_kcnj10a	86.1
+Bs_LOC114844899	Dr_kcnj10a	86.4
+Bs_LOC114844899	Dr_kcnj10b	74.8
+Bs_LOC114844899	Hs_KCNJ10	69.6
+Bs_kcnj10a	Dr_kcnj10a	90.0
+Bs_kcnj10a	Dr_kcnj10b	76.8
+Bs_kcnj10a	Hs_KCNJ10	70.2
+Dr_kcnj10a	Dr_kcnj10b	77.9
+Dr_kcnj10a	Hs_KCNJ10	71.6
+Dr_kcnj10b	Hs_KCNJ10	66.0

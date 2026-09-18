@@ -1,0 +1,8 @@
+# compleasm lives in its own environment: its dependencies (sepp, an older HMMER)
+# conflict with the main analysis environment.
+name: kcnj-qc
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - compleasm=0.2.9

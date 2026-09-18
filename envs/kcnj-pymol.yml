@@ -1,0 +1,5 @@
+name: kcnj-pymol
+channels:
+  - conda-forge
+dependencies:
+  - pymol-open-source=3.1.0

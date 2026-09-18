@@ -1,0 +1,25 @@
+betta_gene	danio_gene	shared_n	shared_names
+LOC114844899	kcnj6	0	
+LOC114844899	kcnj2b	0	
+LOC114844899	kcnj2a	0	
+LOC114860957	kcnj2b	2	btbd17,ccdc137
+LOC114860957	kcnj2a	1	btbd17
+LOC114860957	kcnj16a	1	btbd17
+LOC114861067	kcnj2b	2	btbd17,ccdc137
+LOC114861067	kcnj2a	1	btbd17
+LOC114861067	kcnj16a	1	btbd17
+kcnj10a	kcnj10a	6	capn1,klc2,pnp5,prkd4,sf3b2,si:ch1073-220m6
+kcnj10a	kcnj10b	1	pnp5
+kcnj10a	kcnj6	0	
+kcnj15	kcnj15	4	kcnj6,psmg1,ttc3,vps26c
+kcnj15	kcnj6	3	psmg1,ttc3,vps26c
+kcnj15	kcnj2b	0	
+kcnj16a	kcnj16a	4	btbd17,gprc5c,kcnj2,map2k6
+kcnj16a	kcnj2a	3	btbd17,gprc5c,map2k6
+kcnj16a	kcnj2b	1	btbd17
+kcnj2a	kcnj2a	5	btbd17,gpr142,gprc5c,kcnj16,map2k6
+kcnj2a	kcnj16a	4	btbd17,gpr142,gprc5c,map2k6
+kcnj2a	kcnj2b	1	btbd17
+kcnj6	kcnj6	3	kcnj15,ttc3,vps26c
+kcnj6	kcnj15	2	ttc3,vps26c
+kcnj6	kcnj2b	0	
