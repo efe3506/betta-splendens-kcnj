@@ -3,11 +3,11 @@ import re
 
 PROPOSED_NAMES = {
     'LOC114861067': 'kcnj2b',
-    'LOC114863156': 'kcnj4',
+    'LOC114863156': 'kcnj4b',
     'LOC114860957': 'kcnj16b',
     'LOC114846053': 'kcnj19b',
     'LOC114860740': 'kcnj19a',
-    'LOC114844899': 'kcnj10c',
+    'LOC114844899': 'kcnj10b',
 }
 
 SUBFAMILY_BY_NUMBER = {

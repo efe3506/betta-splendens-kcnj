@@ -11,8 +11,24 @@ COLORS = {'Bs': '#C44E52', 'Dr': '#4C72B0', 'Hs': '#6e6e6e'}
 SPECIES = {'Bs': 'Betta splendens', 'Dr': 'Danio rerio', 'Hs': 'Homo sapiens'}
 
 
-def ufboot(clade):
-    label = clade.name or (str(clade.confidence) if clade.confidence is not None else '')
+def split_supports(tree):
+    """Bipartition -> support label, taken from the unrooted tree.
+
+    Support values belong to branches. Bio.Phylo does not move node labels when a tree is
+    re-rooted, so they are looked up by bipartition instead of being read from the nodes.
+    """
+    tips = frozenset(t.name for t in tree.get_terminals())
+    table = {}
+    for clade in tree.get_nonterminals():
+        members = frozenset(t.name for t in clade.get_terminals())
+        label = clade.name if clade.name else clade.confidence
+        if label is not None and 1 < len(members) < len(tips) - 1:
+            table[members] = table[tips - members] = str(label)
+    return table
+
+
+def ufboot(clade, table):
+    label = table.get(frozenset(t.name for t in clade.get_terminals()), '')
     try:
         return float(label.split('/')[1])
     except (IndexError, ValueError):
@@ -22,6 +38,7 @@ def ufboot(clade):
 def main():
     os.makedirs('figures', exist_ok=True)
     tree = Phylo.read(TREE, 'newick')
+    table = split_supports(tree)
     tree.root_at_midpoint()
     tree.ladderize()
     leaves = tree.get_terminals()
@@ -59,7 +76,7 @@ def main():
         for child in clade:
             ax.plot([cx, x[id(child)]], [y[id(child)]] * 2, color='#3a3a3a', lw=1.1, zorder=1)
             draw(child)
-        support = ufboot(clade)
+        support = ufboot(clade, table)
         if support is not None and clade is not tree.root:
             if support >= 95:
                 ax.plot(cx, cy, 'o', ms=4.2, color='#1a1a1a', zorder=4)

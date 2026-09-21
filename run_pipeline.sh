@@ -6,6 +6,7 @@ RUN_QC=${RUN_QC:-1}
 REFRESH_INPUTS=${REFRESH_INPUTS:-0}
 QC_ENV=${QC_ENV:-kcnj-qc}
 PYMOL_ENV=${PYMOL_ENV:-kcnj-pymol}
+SEL_ENV=${SEL_ENV:-kcnj-sel}
 
 ASSEMBLIES="REF NCU LOEWE BGI"
 declare -A ACCESSION
@@ -18,10 +19,21 @@ DANIO=GCF_052040795.1
 ANABAS=GCF_900324465.3
 MEDAKA=GCF_053564925.1
 
+declare -A SPECIES
+SPECIES[Bs]=GCF_900634795.4
+SPECIES[At]=GCF_900324465.3
+SPECIES[Ol]=GCF_053564925.1
+SPECIES[Dr]=GCF_052040795.1
+SPECIES[Am]=GCF_023375975.1
+SPECIES[Lo]=GCF_040954835.1
+
 ID=results/01_identification
 CA=results/02_cross_assembly
 PH=results/03_phylogeny
 ST=results/04_structure
+TX=results/07_taxa
+SC=results/09_syntenic_scan
+SL=results/10_selection
 
 step() {
   printf '\n=== %s ===\n' "$1"
@@ -186,6 +198,91 @@ conda run --no-capture-output -n "$PYMOL_ENV" pymol -cq scripts/14_structure_fig
 step "11. Phylogeny and synteny figures"
 python3 scripts/15_tree_figure.py
 python3 scripts/16_synteny_figure.py
+
+step "12. The family in five further species"
+for tag in Bs At Ol Dr Am Lo; do
+  if [[ -s data/species/$tag/cds.fna ]]; then
+    continue
+  fi
+  acc=${SPECIES[$tag]}
+  src=data/tmp/$acc/ncbi_dataset/data/$acc
+  mkdir -p data/species/$tag
+  include=protein,gff3,cds
+  if [[ $tag == Dr || $tag == Am ]]; then
+    include=genome,protein,gff3,cds
+  fi
+  fetch "$acc" $include
+  mv "$src"/protein.faa "$src"/genomic.gff data/species/$tag/
+  mv "$src"/cds_from_genomic.fna data/species/$tag/cds.fna
+  if [[ $tag == Dr || $tag == Am ]]; then
+    mv "$src"/"${acc}"_*_genomic.fna data/species/$tag/genome.fna
+    samtools faidx data/species/$tag/genome.fna
+  fi
+done
+mkdir -p $TX $SC $SL
+python3 scripts/17_family_in_species.py
+
+if [[ ! -s $TX/kir_all.treefile ]]; then
+  mafft --localpair --maxiterate 1000 --thread "$THREADS" --quiet $TX/kir_all.faa > $TX/kir_all_aln.faa
+  trimal -in $TX/kir_all_aln.faa -out $TX/kir_all_trimmed.faa -automated1
+  build_tree $TX/kir_all_trimmed.faa 601899 $TX/kir_all
+fi
+
+
+step "13. Topology test for the kcnj10 genes"
+if [[ ! -s $TX/kcnj10_AU.iqtree ]]; then
+  cp reference_data/kcnj10_ohnologue.constr $TX/
+  model=$(grep -m1 'Best-fit model according to BIC' $TX/kir_all.iqtree | awk '{print $NF}')
+  iqtree3 -s $TX/kir_all_trimmed.faa -m "$model" -g $TX/kcnj10_ohnologue.constr \
+    -T "$THREADS" --seed 206131 --prefix $TX/kir_all_constrained
+  cat $TX/kir_all.treefile $TX/kir_all_constrained.treefile > $TX/kcnj10_topologies.trees
+  iqtree3 -s $TX/kir_all_trimmed.faa -m "$model" -z $TX/kcnj10_topologies.trees \
+    -n 0 -zb 10000 -au -T "$THREADS" --seed 843656 --prefix $TX/kcnj10_AU
+fi
+
+
+step "14. Genome-level tests of absence"
+hits() {
+  miniprot -t "$THREADS" --gff --outs=0.3 "$1" "$2" 2> /dev/null \
+    | awk '$3=="mRNA"' | sed -E 's/ID=[^;]+;//' | cut -f1,4,5,7,9 | sed "s/^/$3\t/"
+}
+seqkit grep -p Bs_LOC114863156 -p At_LOC113162111 -p Ol_LOC101162982 -p Dr_kcnj4 -p Am_kcnj4 \
+  -p Bs_LOC114860957 -p At_LOC113160616 -p Ol_LOC101171333 -p Dr_kcnj16a -p Am_kcnj16 \
+  $TX/kir_all.faa > $SC/otophysan_queries.faa
+for tag in Dr Am; do
+  hits data/species/$tag/genome.fna $SC/otophysan_queries.faa $tag
+done > $SC/otophysan_miniprot.tsv
+python3 scripts/18_hits_to_genes.py $SC/otophysan_miniprot.tsv $SC/otophysan \
+  Dr=data/species/Dr/genomic.gff Am=data/species/Am/genomic.gff
+
+seqkit grep -p At_kcnj4 -p Ol_kcnj4 -p At_kcnj20 -p Ol_kcnj20 -p At_LOC113162111 \
+  $TX/kir_all.faa > $SC/betta_queries.faa
+for g in $ASSEMBLIES; do
+  hits data/genomes/$g.fna $SC/betta_queries.faa $g
+done > $SC/betta_miniprot.tsv
+python3 scripts/18_hits_to_genes.py $SC/betta_miniprot.tsv $SC/betta REF=data/annotation/REF_genomic.gff
+
+python3 scripts/19_syntenic_scan.py
+
+
+step "15. Selective constraint on the retained ohnologues"
+python3 scripts/20_selection_prep.py
+for fam in kcnj16 kcnj4; do
+  for aln in codon codon_nogap; do
+    if [[ ! -s $SL/${fam}_${aln}_relax.json ]]; then
+      conda run --no-capture-output -n "$SEL_ENV" hyphy relax --alignment $SL/${fam}_${aln}.fna \
+        --tree $SL/${fam}_tagged.nwk --test test --reference reference \
+        --output $SL/${fam}_${aln}_relax.json > $SL/${fam}_${aln}_relax.log
+      conda run --no-capture-output -n "$SEL_ENV" hyphy absrel --alignment $SL/${fam}_${aln}.fna \
+        --tree $SL/${fam}_tagged.nwk --branches test \
+        --output $SL/${fam}_${aln}_absrel.json > $SL/${fam}_${aln}_absrel.log
+    fi
+  done
+done
+
+
+step "16. Figures of the extended tree"
+python3 scripts/21_extended_tree_figure.py
 
 rm -rf data/tmp
 step "Finished: tables are in results/, figures are in figures/"

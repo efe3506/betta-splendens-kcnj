@@ -1,0 +1,11 @@
+USER TREES
+----------
+
+See kcnj10_AU.trees for trees with branch lengths.
+
+Tree      logL    deltaL  bp-RELL    p-KH     p-SH       c-ELW       p-AU
+-------------------------------------------------------------------------
+  1  -28041.5651       0   0.984 +  0.962 +      1 +     0.977 +        1 + 
+  2 -28052.56849  11.003   0.016 -  0.038 -  0.038 -    0.0226 -  0.00878 - 
+
+deltaL  : logL difference from the maximal logl in the set.

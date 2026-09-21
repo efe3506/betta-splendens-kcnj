@@ -2,7 +2,8 @@
 
 Code and reference results for a genome-wide survey of the inwardly rectifying potassium
 channel (Kir, *kcnj*) gene family in the Siamese fighting fish, *Betta splendens*, using
-four public genome assemblies.
+four public genome assemblies, and for its comparison with spotted gar, *Anabas
+testudineus*, medaka, zebrafish and *Astyanax mexicanus*.
 
 The whole analysis is one bash script, `run_pipeline.sh`, which calls a set of small Python
 scripts in `scripts/`. It needs no input other than an internet connection: every sequence
@@ -23,6 +24,11 @@ is downloaded from public databases.
 | 9 | A closer look at the *kcnj15* locus in the four assemblies | minimap2, MAFFT |
 | 10 | Do predicted structures agree with the orthology calls? | AlphaFold DB models, PyMOL |
 | 11 | Remaining figures | Matplotlib |
+| 12 | Which Kir genes do five further species have? Tree of 169 sequences | HMMER, MAFFT, trimAl, IQ-TREE |
+| 13 | Is an ohnologue relationship of the second *kcnj10* genes compatible with the data? | IQ-TREE (constrained search, AU test) |
+| 14 | Are genes that are missing from an annotation also missing from the genome? | miniprot, tblastn, minimap2 |
+| 15 | Are the retained ohnologues under the same constraint as their counterparts? | HyPhy (RELAX, aBSREL) |
+| 16 | Figures of the extended tree | Matplotlib |
 
 Assemblies used:
 
@@ -33,16 +39,27 @@ Assemblies used:
 | LOEWE | GCA_013403625.1 | |
 | BGI | GCA_003650155.1 | |
 
+Other species (RefSeq annotations; genome sequence only for the two otophysans):
+
+| Label | Species | Accession |
+|---|---|---|
+| Lo | *Lepisosteus oculatus* | GCF_040954835.1 |
+| At | *Anabas testudineus* | GCF_900324465.3 |
+| Ol | *Oryzias latipes* | GCF_053564925.1 |
+| Dr | *Danio rerio* | GCF_052040795.1 |
+| Am | *Astyanax mexicanus* | GCF_023375975.1 |
+
 ## Requirements
 
-Linux, [conda](https://docs.conda.io) (or mamba), about 10 GB of free disk space and an
-internet connection. Three environments are used because the tools cannot all be installed
+Linux, [conda](https://docs.conda.io) (or mamba), about 15 GB of free disk space and an
+internet connection. Four environments are used because the tools cannot all be installed
 together:
 
 ```bash
 conda env create -f envs/kcnj.yml         # main environment
 conda env create -f envs/kcnj-qc.yml      # compleasm only
 conda env create -f envs/kcnj-pymol.yml   # PyMOL only
+conda env create -f envs/kcnj-sel.yml     # HyPhy only
 ```
 
 All versions are pinned in the environment files.
@@ -69,7 +86,7 @@ Settings are environment variables:
 
 Example: `THREADS=16 RUN_QC=0 bash run_pipeline.sh`
 
-With `RUN_QC=0` most of the running time is spent in miniprot and in the four IQ-TREE runs.
+With `RUN_QC=0` most of the running time is spent in miniprot and in the IQ-TREE runs.
 
 ## Repository layout
 
@@ -101,6 +118,11 @@ expected_results/    the tables and trees the pipeline is expected to produce
 | `14_structure_figures.pml` | PyMOL renderings | Fig. 5, Fig. S4, Fig. S5 |
 | `15_tree_figure.py` | family tree | Fig. 2 |
 | `16_synteny_figure.py` | *kcnj16*–*kcnj2* blocks in two species | Fig. 4 |
+| `17_family_in_species.py` | the same domain search in five further species; sequence set of the extended tree; zebrafish compared with the UniProt set | `gene_counts.tsv`, `kir_all.faa` |
+| `18_hits_to_genes.py` | assigns miniprot alignments to annotated genes | `otophysan_hits.tsv`, `betta_hits.tsv` |
+| `19_syntenic_scan.py` | tblastn search of the interval in which a missing gene is expected | `hits.tsv`, `windows.tsv` |
+| `20_selection_prep.py` | codon alignments and labelled trees for HyPhy | `*_codon.fna`, `*_tagged.nwk` |
+| `21_extended_tree_figure.py` | extended tree and its three focal clades | Fig. 6, Fig. S6 |
 
 ## Reproducibility notes
 
@@ -120,11 +142,18 @@ expected_results/    the tables and trees the pipeline is expected to produce
   ```
 
   Trees are best compared by topology rather than by text.
+- **Support values in figures.** Bio.Phylo does not move node labels when a tree is re-rooted.
+  The figure scripts therefore read support values from the bipartitions of the unrooted
+  tree, not from the nodes of the rooted one.
+- **Zebrafish assembly.** In GRCz12ab (GCF_052040795.1) chromosomes 4 and 19 derive from the
+  Tuebingen strain; the submitter has replaced the assembly by GRCz13ab (GCA_052040795.2),
+  which was not annotated when the analysis was run. None of the loci examined here lies on
+  these chromosomes.
 - **Predicted structures** are downloaded from the AlphaFold Protein Structure Database.
   The paper used model version 6. The database may release new versions; the version that
   is downloaded is printed by `scripts/13_structure_analysis.py`.
-- **Annotation releases.** The zebrafish, climbing perch and medaka annotations are fetched
-  by assembly accession. If NCBI replaces an annotation release, gene symbols in the
+- **Annotation releases.** The annotations of the other species are fetched by assembly
+  accession. If NCBI replaces an annotation release, gene symbols in the
   synteny table can change.
 
 ## Data sources and licences

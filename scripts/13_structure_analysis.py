@@ -10,11 +10,11 @@ import numpy as np
 from common import read_fasta
 
 OUT = 'results/06_protein_model'
-TARGETS = [('A0A6P7NPA5', 'kcnj4'), ('A0A6P7L678', 'kcnj2a'),
+TARGETS = [('A0A6P7NPA5', 'kcnj4b'), ('A0A6P7L678', 'kcnj2a'),
            ('A0A6P7N863', 'kcnj16b'), ('A0A6P7L4L5', 'kcnj16a'),
-           ('A0A6P7L185', 'kcnj10c'), ('A0A6P7LKZ5', 'kcnj10a'),
+           ('A0A6P7L185', 'kcnj10b'), ('A0A6P7LKZ5', 'kcnj10a'),
            ('A0A6P7PE36', 'kcnj15')]
-PAIRS = [('kcnj16b', 'kcnj16a'), ('kcnj10c', 'kcnj10a'), ('kcnj4', 'kcnj2a')]
+PAIRS = [('kcnj16b', 'kcnj16a'), ('kcnj10b', 'kcnj10a'), ('kcnj4b', 'kcnj2a')]
 FILTER = 'TIGYG'
 CONFIDENT = 70.0
 AA = {'ALA': 'A', 'ARG': 'R', 'ASN': 'N', 'ASP': 'D', 'CYS': 'C', 'GLN': 'Q', 'GLU': 'E',

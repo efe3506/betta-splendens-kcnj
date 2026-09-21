@@ -1,0 +1,6 @@
+name: kcnj-sel
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - hyphy=2.5.101
