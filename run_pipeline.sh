@@ -182,11 +182,13 @@ if [[ ! -s $ST/meme/meme.txt ]]; then
   meme $ID/REF_kcnj_canonical.faa -protein -oc $ST/meme -nmotifs 10 -minw 6 -maxw 50 -mod zoops
 fi
 python3 scripts/11_motif_matrix.py
+python3 scripts/22_motif_figure.py
 
 
 step "9. kcnj15 locus"
 python3 scripts/12_kcnj15_locus.py utr
 python3 scripts/12_kcnj15_locus.py lead
+python3 scripts/12_kcnj15_locus.py intron
 python3 scripts/12_kcnj15_locus.py cds
 
 

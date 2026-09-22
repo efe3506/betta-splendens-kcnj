@@ -96,8 +96,10 @@ def draw_tree(ax, fig, root, numbers, fontsize, table):
             return
         if numbers:
             txt = f'{sh:g}/{uf:g}' if sh is not None else f'{uf:g}'
-            ax.annotate(txt, (x, y), xytext=(-2, 3), textcoords='offset points',
-                        ha='right', va='bottom', fontsize=fontsize - 2, color='#444444')
+            ax.annotate(txt, (x, y), xytext=(3, 4), textcoords='offset points',
+                        ha='left', va='bottom', fontsize=fontsize - 2, color='#444444',
+                        bbox=dict(boxstyle='round,pad=0.12', fc='white', ec='none', alpha=.85),
+                        zorder=5)
         elif uf >= 95:
             ax.plot(x, y, 'o', ms=3.4, color='#1a1a1a', zorder=4)
         elif uf >= 70:
@@ -178,15 +180,22 @@ def main():
     print(f'{OUT_FOCAL} written ({sizes} taxa per panel)')
 
     # --- whole tree ---
-    n = len(t.get_terminals())
-    fig, ax = plt.subplots(figsize=(10.5, 0.19 * n + 2))
-    draw_tree(ax, fig, t.root, numbers=False, fontsize=7.2, table=table)
-    scale_bar(ax, -0.2, 0.5)
-    legend(ax, numbers=False, fontsize=9, loc='upper center', bbox_to_anchor=(0.45, 0.0),
-           ncol=4, handletextpad=.5, columnspacing=1.6)
+    # the two halves of the midpoint-rooted tree side by side, same leaf spacing
+    halves = list(t.root.clades)
+    sizes = [len(c.get_terminals()) for c in halves]
+    fig, axes = plt.subplots(1, len(halves), figsize=(7.2 * len(halves), 0.135 * max(sizes) + 2.4))
+    for ax, clade, letter in zip(axes, halves, 'ab'):
+        draw_tree(ax, fig, clade, numbers=False, fontsize=6.5, table=table)
+        ax.set_ylim(max(sizes) - .4, -.8)
+        ax.text(0.0, 1.0, letter, transform=ax.transAxes, fontsize=13, fontweight='bold',
+                va='top', ha='left')
+        scale_bar(ax, len(clade.get_terminals()) + .6, 0.5)
+    small = axes[sizes.index(min(sizes))]
+    legend(small, numbers=False, fontsize=8.5, loc='lower left', bbox_to_anchor=(0.0, 0.02),
+           ncol=2, handletextpad=.5, columnspacing=1.4)
     fig.tight_layout()
     fig.savefig(OUT_FULL, dpi=250)
-    print(f'{OUT_FULL} written ({n} taxa)')
+    print(f'{OUT_FULL} written ({sum(sizes)} taxa in two panels)')
 
 
 if __name__ == '__main__':

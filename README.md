@@ -113,7 +113,7 @@ expected_results/    the tables and trees the pipeline is expected to produce
 | `09_expand_kcnj10.py` | Kir4/Kir5 sequence sets with *Anabas* and medaka blastp hits | `kir45.faa`, `kir45_expanded.faa` |
 | `10_gene_structure.py` | exon counts and lengths; chromosome map and exon diagrams | `gene_structure.tsv`, Fig. 1, Fig. 3 |
 | `11_motif_matrix.py` | motif presence/absence from the MEME output | `motif_presence.tsv` |
-| `12_kcnj15_locus.py` | the *kcnj15* region in the four assemblies (`utr`, `lead`, `cds`) | `variant_genotypes_*.tsv`, `cds_translation.tsv` |
+| `12_kcnj15_locus.py` | the *kcnj15* region in the four assemblies (`utr`, `lead`, `intron`, `cds`) | `variant_genotypes_*.tsv`, `cds_translation.tsv` |
 | `13_structure_analysis.py` | pLDDT profiles and RMSD of AlphaFold DB models | `plddt_summary.tsv`, `structural_comparison.tsv`, Fig. S3 |
 | `14_structure_figures.pml` | PyMOL renderings | Fig. 5, Fig. S4, Fig. S5 |
 | `15_tree_figure.py` | family tree | Fig. 2 |
@@ -123,6 +123,7 @@ expected_results/    the tables and trees the pipeline is expected to produce
 | `19_syntenic_scan.py` | tblastn search of the interval in which a missing gene is expected | `hits.tsv`, `windows.tsv` |
 | `20_selection_prep.py` | codon alignments and labelled trees for HyPhy | `*_codon.fna`, `*_tagged.nwk` |
 | `21_extended_tree_figure.py` | extended tree and its three focal clades | Fig. 6, Fig. S6 |
+| `22_motif_figure.py` | motif architecture of the 23 proteins | Fig. S1 |
 
 ## Reproducibility notes
 
@@ -142,6 +143,10 @@ expected_results/    the tables and trees the pipeline is expected to produce
   ```
 
   Trees are best compared by topology rather than by text.
+- **Extended tree.** For the paper the 169-sequence tree was inferred twice with seed 601899:
+  once with model selection and ultrafast bootstrap, and once under the selected model
+  (Q.PLANT+R6) with SH-aLRT added. The two runs gave the same topology. The pipeline does both
+  in one run, so SH-aLRT and bootstrap values may differ slightly from the published ones.
 - **Support values in figures.** Bio.Phylo does not move node labels when a tree is re-rooted.
   The figure scripts therefore read support values from the bipartitions of the unrooted
   tree, not from the nodes of the rooted one.

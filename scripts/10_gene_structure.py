@@ -9,12 +9,13 @@ from common import (SUBFAMILY_COLORS, SUBFAMILY_ORDER, display_name, read_fasta,
 GFF = 'data/annotation/REF_genomic.gff'
 CANONICAL = 'results/01_identification/REF_kcnj_canonical.faa'
 OUT = 'results/04_structure'
-TANDEM_MB = 0.3
+NEIGHBOUR_KB = 30      # genes closer than this are joined in Fig. 1
 
 
 def parse_gff(wanted):
     gene_rec, rna_of_protein = {}, {}
     exon_spans = collections.defaultdict(list)
+    cds_spans = collections.defaultdict(list)
     cds_len = collections.Counter()
     seq_len, chrom_name = {}, {}
     for line in open(GFF):
@@ -40,17 +41,19 @@ def parse_gff(wanted):
             exon_spans[parent.group(1)].append((int(f[3]), int(f[4])))
         elif f[2] == 'CDS' and parent:
             cds_len[parent.group(1)] += int(f[4]) - int(f[3]) + 1
+            cds_spans[parent.group(1)].append((int(f[3]), int(f[4])))
             pid = re.search(r'protein_id=([^;]+)', f[8])
             if pid:
                 rna_of_protein[pid.group(1)] = parent.group(1)
-    return gene_rec, rna_of_protein, exon_spans, cds_len, seq_len, chrom_name
+    return gene_rec, rna_of_protein, exon_spans, cds_spans, cds_len, seq_len, chrom_name
 
 
 def main():
     os.makedirs(OUT, exist_ok=True)
     os.makedirs('figures', exist_ok=True)
     canonical = dict(h.split('|') for h, _ in read_fasta(CANONICAL))
-    gene_rec, rna_of_protein, exon_spans, cds_len, seq_len, chrom_name = parse_gff(set(canonical))
+    (gene_rec, rna_of_protein, exon_spans, cds_spans, cds_len, seq_len,
+     chrom_name) = parse_gff(set(canonical))
 
     rows = []
     for gene, protein in canonical.items():
@@ -63,6 +66,7 @@ def main():
             'start': start, 'end': end, 'strand': strand, 'span': end - start + 1,
             'exons': len(exon_spans[rna]), 'cds': cds_len[rna],
             'aa': cds_len[rna] // 3 - 1, 'spans': sorted(exon_spans[rna]),
+            'cds_spans': sorted(cds_spans[rna]),
         })
     rows.sort(key=lambda r: (SUBFAMILY_ORDER.index(r['subfamily']), r['gene']))
 
@@ -85,10 +89,10 @@ def main():
     for i, contig in enumerate(chroms):
         ax.plot([i, i], [0, seq_len[contig] / 1e6], color='#d9d9d9', lw=7,
                 solid_capstyle='round', zorder=1)
-        prev_y = prev_x = last_label_y = None
+        prev_y = prev_x = last_label_y = prev_end = None
         for r in sorted((r for r in rows if r['contig'] == contig), key=lambda r: r['start']):
             y = r['start'] / 1e6
-            tandem = prev_y is not None and abs(y - prev_y) < TANDEM_MB
+            tandem = prev_y is not None and (r['start'] - prev_end) / 1e3 < NEIGHBOUR_KB
             x = i + (0.13 if tandem else 0.0)
             ax.plot(x, y, 'o', color=SUBFAMILY_COLORS[r['subfamily']], ms=7, zorder=3,
                     markeredgecolor='white', markeredgewidth=.6)
@@ -98,10 +102,10 @@ def main():
             if last_label_y is not None and abs(label_y - last_label_y) < 0.9:
                 label_y = last_label_y + 0.9
             if abs(label_y - y) > 0.05:
-                ax.plot([x, x + 0.07], [y, label_y], color='#999999', lw=.6, zorder=2)
+                ax.plot([x, x + 0.07], [y, label_y], color='#b0b0b0', lw=.6, ls=':', zorder=2)
             ax.annotate(f"$\\it{{{r['gene']}}}$", (x, label_y), xytext=(8, 0),
                         textcoords='offset points', fontsize=8.5, va='center', zorder=4)
-            prev_y, prev_x, last_label_y = y, x, label_y
+            prev_y, prev_x, last_label_y, prev_end = y, x, label_y, r['end']
     ax.set_xticks(range(len(chroms)))
     ax.set_xticklabels([chrom_name[c] for c in chroms], fontsize=8)
     ax.set_xlim(-0.7, len(chroms) - 0.3)
@@ -121,16 +125,35 @@ def main():
         y = len(rows) - k
         g0, g1 = r['spans'][0][0], max(e for _, e in r['spans'])
         scale = 1.0 / (g1 - g0)
+        minus = r['strand'] == '-'
+
+        def rel(s, e):
+            # every gene is drawn 5' to 3', so minus-strand genes are mirrored
+            a, b = (s - g0) * scale, (e - g0) * scale
+            return (1 - b, 1 - a) if minus else (a, b)
+        colour = SUBFAMILY_COLORS[r['subfamily']]
         ax.plot([0, 1], [y, y], color='#999999', lw=1, zorder=1)
-        for s, e in r['spans']:
-            ax.add_patch(plt.Rectangle(((s - g0) * scale, y - .3), (e - s) * scale, .6,
-                                       color=SUBFAMILY_COLORS[r['subfamily']], zorder=2))
+        for s, e in r['spans']:                      # exon incl. UTR: pale, narrow box
+            a, b = rel(s, e)
+            ax.add_patch(plt.Rectangle((a, y - .18), b - a, .36, facecolor=colour, alpha=.35,
+                                       edgecolor='none', zorder=2))
+        for s, e in r['cds_spans']:                  # coding part: full box
+            a, b = rel(s, e)
+            ax.add_patch(plt.Rectangle((a, y - .3), b - a, .6, color=colour, zorder=3))
+        ax.annotate('', xy=(1.005, y), xytext=(0.985, y),
+                    arrowprops=dict(arrowstyle='-|>', color='#999999', lw=1), zorder=1)
         ax.text(-0.02, y, f"$\\it{{{r['gene']}}}$", ha='right', va='center', fontsize=10)
-        ax.text(1.02, y, f"{r['exons']} exons · {r['span'] / 1000:.1f} kb",
+        n = r['exons']
+        ax.text(1.03, y, f"{n} exon{'s' if n != 1 else ''} · {r['span'] / 1000:.1f} kb",
                 ha='left', va='center', fontsize=8, color='#555555')
     ax.set_xlim(-0.18, 1.3)
-    ax.set_ylim(0, len(rows) + 1)
+    ax.set_ylim(-1.6, len(rows) + 1)
     ax.axis('off')
+    from matplotlib.patches import Patch
+    ax.legend(handles=[Patch(facecolor='#777777', label='coding sequence'),
+                       Patch(facecolor='#777777', alpha=.35, label='untranslated exon'),
+                       Line2D([], [], color='#999999', lw=1, label="intron; arrow = 5'→3'")],
+              loc='lower left', ncol=3, fontsize=8.5, frameon=False)
     figstyle.title(ax, 'Exon–intron structure of $\\it{kcnj}$ genes', fontsize=12)
     fig.tight_layout()
     fig.savefig('figures/fig3_gene_structure.png')

@@ -11,7 +11,7 @@ from common import read_fasta
 OUT = 'results/05_kcnj15_locus'
 ASSEMBLIES = ['REF', 'NCU', 'LOEWE', 'BGI']
 ANCHOR, ANCHOR_CONTIG = 'NCU', 'CM045483.1'
-UTR_VARIANT, LEAD_VARIANT = 9596738, 9590677
+UTR_VARIANT, LEAD_VARIANT, INTRON_VARIANT = 9596738, 9590677, 9590546   # Zhang et al. 2022
 CDS_START, CDS_END = 9595158, 9596181
 PAD = 200
 
@@ -44,6 +44,8 @@ def main(mode):
         centre, flank = UTR_VARIANT, 1000
     elif mode == 'lead':
         centre, flank = LEAD_VARIANT, 1000
+    elif mode == 'intron':
+        centre, flank = INTRON_VARIANT, 1000
     elif mode == 'cds':
         centre = (CDS_START + CDS_END) // 2
         flank = (CDS_END - CDS_START) // 2 + 400
