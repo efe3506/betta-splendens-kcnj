@@ -120,7 +120,7 @@ def main():
     axes[-1].set_xlabel('residue number')
     figstyle.title(axes[0], 'AlphaFold pLDDT profiles', fontsize=11)
     fig.tight_layout()
-    fig.savefig('figures/figS3_plddt_profiles.png')
+    figstyle.save(fig, 'figures/figS3_plddt_profiles.png')
 
 
 if __name__ == '__main__':

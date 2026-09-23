@@ -82,7 +82,7 @@ def main():
     ax[1].legend(fontsize=8)
     ax[1].grid(alpha=.3)
     fig.tight_layout()
-    fig.savefig('figures/figS2_gene_conversion.png')
+    figstyle.save(fig, 'figures/figS2_gene_conversion.png')
 
 
 if __name__ == '__main__':

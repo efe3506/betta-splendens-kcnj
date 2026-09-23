@@ -30,7 +30,7 @@ def read_fasta(path):
 
 
 def main():
-    import figstyle  # noqa: F401
+    import figstyle
     import matplotlib.pyplot as plt
     from matplotlib.patches import Patch
     text = open(MEME_TXT).read()
@@ -114,7 +114,7 @@ def main():
     ax.legend(handles=handles, ncol=11, fontsize=8.5, frameon=False, loc='upper center',
               bbox_to_anchor=(0.45, -0.07), handlelength=1.2, columnspacing=1.0,
               handletextpad=.4)
-    fig.savefig(OUT)
+    figstyle.save(fig, OUT)
     print(OUT)
 
 

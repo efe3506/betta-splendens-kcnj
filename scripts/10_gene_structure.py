@@ -118,7 +118,7 @@ def main():
                        for s in SUBFAMILY_ORDER], fontsize=9, title='subfamily')
     ax.grid(axis='y', alpha=.3)
     fig.tight_layout()
-    fig.savefig('figures/fig1_chromosome_map.png')
+    figstyle.save(fig, 'figures/fig1_chromosome_map.png')
 
     fig, ax = plt.subplots(figsize=(10, 9))
     for k, r in enumerate(rows):
@@ -156,7 +156,7 @@ def main():
               loc='lower left', ncol=3, fontsize=8.5, frameon=False)
     figstyle.title(ax, 'Exon–intron structure of $\\it{kcnj}$ genes', fontsize=12)
     fig.tight_layout()
-    fig.savefig('figures/fig3_gene_structure.png')
+    figstyle.save(fig, 'figures/fig4_gene_structure.png')
 
 
 if __name__ == '__main__':

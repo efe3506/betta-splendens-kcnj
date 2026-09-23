@@ -11,7 +11,7 @@ from Bio import Phylo
 from common import PROPOSED_NAMES
 
 TREE = 'results/07_taxa/kir_all.treefile'
-OUT_FOCAL = 'figures/fig6_focal_clades.png'
+OUT_FOCAL = 'figures/fig3_focal_clades.png'
 OUT_FULL = 'figures/figS6_extended_tree.png'
 
 RENAME = {f'Bs_{loc}': f'Bs_{name}' for loc, name in PROPOSED_NAMES.items()}
@@ -154,7 +154,7 @@ def scale_bar(ax, y, length):
 
 def main():
     os.makedirs('figures', exist_ok=True)
-    import figstyle  # noqa: F401
+    import figstyle
     import matplotlib.pyplot as plt
 
     t = Phylo.read(TREE, 'newick')
@@ -176,7 +176,7 @@ def main():
     legend(axes[-1], numbers=True, fontsize=8.5, loc='upper center',
            bbox_to_anchor=(0.5, -0.04), ncol=4, handletextpad=.5, columnspacing=1.4)
     fig.tight_layout()
-    fig.savefig(OUT_FOCAL, dpi=300)
+    figstyle.save(fig, OUT_FOCAL)
     print(f'{OUT_FOCAL} written ({sizes} taxa per panel)')
 
     # --- whole tree ---
@@ -194,7 +194,7 @@ def main():
     legend(small, numbers=False, fontsize=8.5, loc='lower left', bbox_to_anchor=(0.0, 0.02),
            ncol=2, handletextpad=.5, columnspacing=1.4)
     fig.tight_layout()
-    fig.savefig(OUT_FULL, dpi=250)
+    figstyle.save(fig, OUT_FULL)
     print(f'{OUT_FULL} written ({sum(sizes)} taxa in two panels)')
 
 

@@ -137,7 +137,7 @@ def main():
     ax.invert_yaxis()
     ax.axis('off')
     fig.tight_layout()
-    fig.savefig('figures/fig2_phylogeny.png')
+    figstyle.save(fig, 'figures/fig2_phylogeny.png')
     print(f'figures/fig2_phylogeny.png ({len(leaves)} taxa)')
 
 

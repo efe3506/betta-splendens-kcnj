@@ -84,6 +84,9 @@ Settings are environment variables:
 | `REFRESH_INPUTS` | 0 | `1` rebuilds the query set and the HMMs from the live databases instead of using `reference_data/` |
 | `FIG_TITLES` | 0 | `1` draws a title inside each figure (journals usually do not want one) |
 
+Each figure script writes a 600 dpi PNG and a vector PDF of the same name; the PDF is the file
+to upload to the journal.
+
 Example: `THREADS=16 RUN_QC=0 bash run_pipeline.sh`
 
 With `RUN_QC=0` most of the running time is spent in miniprot and in the IQ-TREE runs.
@@ -111,18 +114,18 @@ expected_results/    the tables and trees the pipeline is expected to produce
 | `07_synteny.py` | ten annotated neighbours on each side of focal genes, shared between species | `synteny_scores.tsv` |
 | `08_gene_conversion.py` | sliding-window identity in the *kcnj10* group | `gene_conversion_windows.tsv`, Fig. S2 |
 | `09_expand_kcnj10.py` | Kir4/Kir5 sequence sets with *Anabas* and medaka blastp hits | `kir45.faa`, `kir45_expanded.faa` |
-| `10_gene_structure.py` | exon counts and lengths; chromosome map and exon diagrams | `gene_structure.tsv`, Fig. 1, Fig. 3 |
+| `10_gene_structure.py` | exon counts and lengths; chromosome map and exon diagrams | `gene_structure.tsv`, Fig. 1, Fig. 4 |
 | `11_motif_matrix.py` | motif presence/absence from the MEME output | `motif_presence.tsv` |
 | `12_kcnj15_locus.py` | the *kcnj15* region in the four assemblies (`utr`, `lead`, `intron`, `cds`) | `variant_genotypes_*.tsv`, `cds_translation.tsv` |
 | `13_structure_analysis.py` | pLDDT profiles and RMSD of AlphaFold DB models | `plddt_summary.tsv`, `structural_comparison.tsv`, Fig. S3 |
-| `14_structure_figures.pml` | PyMOL renderings | Fig. 5, Fig. S4, Fig. S5 |
+| `14_structure_figures.pml` | PyMOL renderings | Fig. 6, Fig. S4, Fig. S5 |
 | `15_tree_figure.py` | family tree | Fig. 2 |
-| `16_synteny_figure.py` | *kcnj16*–*kcnj2* blocks in two species | Fig. 4 |
+| `16_synteny_figure.py` | *kcnj16*–*kcnj2* blocks in two species | Fig. 5 |
 | `17_family_in_species.py` | the same domain search in five further species; sequence set of the extended tree; zebrafish compared with the UniProt set | `gene_counts.tsv`, `kir_all.faa` |
 | `18_hits_to_genes.py` | assigns miniprot alignments to annotated genes | `otophysan_hits.tsv`, `betta_hits.tsv` |
 | `19_syntenic_scan.py` | tblastn search of the interval in which a missing gene is expected | `hits.tsv`, `windows.tsv` |
 | `20_selection_prep.py` | codon alignments and labelled trees for HyPhy | `*_codon.fna`, `*_tagged.nwk` |
-| `21_extended_tree_figure.py` | extended tree and its three focal clades | Fig. 6, Fig. S6 |
+| `21_extended_tree_figure.py` | extended tree and its three focal clades | Fig. 3, Fig. S6 |
 | `22_motif_figure.py` | motif architecture of the 23 proteins | Fig. S1 |
 
 ## Reproducibility notes

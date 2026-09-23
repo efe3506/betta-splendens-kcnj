@@ -117,8 +117,8 @@ def main():
     ax.set_ylim(-ROW * len(tracks) - .35, 1.35)
     ax.axis('off')
     fig.tight_layout()
-    fig.savefig('figures/fig4_synteny.png')
-    print('figures/fig4_synteny.png')
+    figstyle.save(fig, 'figures/fig5_synteny.png')
+    print('figures/fig5_synteny.png')
 
 
 if __name__ == '__main__':

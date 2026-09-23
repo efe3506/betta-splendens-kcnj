@@ -14,7 +14,7 @@ set label_color, black
 set label_font_id, 7
 set label_outline_color, white
 set float_labels, 1
-viewport 1500, 1900
+viewport 1500, 1900   # ray asagida 3000x3800 ile cagrilir (600 dpi @ 127 mm)
 bg_color white
 
 python
@@ -66,8 +66,8 @@ orient kcnj16a
 turn z, -90
 turn y, 15
 zoom visible, buffer=4
-ray 1500, 1900
-png figures/fig5_kcnj16b_overlay.png, dpi=300
+ray 3000, 3800
+png figures/fig6_kcnj16b_overlay.png, dpi=600
 
 # ---------------------------------------------------------------
 # Fig. S4: kcnj4b coloured by pLDDT, whole chain
@@ -87,8 +87,8 @@ orient kcnj4b
 turn z, -90
 turn y, 15
 zoom visible, buffer=4
-ray 1500, 1900
-png figures/figS4_kcnj4b_plddt.png, dpi=300
+ray 3000, 3800
+png figures/figS4_kcnj4b_plddt.png, dpi=600
 
 # ---------------------------------------------------------------
 # Fig. S5: kcnj10b (blue) superimposed on kcnj10a (grey)
@@ -114,7 +114,7 @@ orient kcnj10a
 turn z, -90
 turn y, 15
 zoom visible, buffer=4
-ray 1500, 1900
-png figures/figS5_kcnj10b_overlay.png, dpi=300
+ray 3000, 3800
+png figures/figS5_kcnj10b_overlay.png, dpi=600
 
 print "fig5, figS4, figS5 written to figures/"
